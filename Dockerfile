@@ -65,8 +65,22 @@ COPY CLAUDE.md /workspace/CLAUDE.md
 COPY setup.sh /workspace/setup.sh
 COPY claude-start /usr/local/bin/claude-start
 
+# Copy project management scripts
+COPY scripts/claude-init.sh /usr/local/bin/claude-init
+COPY scripts/claude-open.sh /usr/local/bin/claude-open
+COPY scripts/claude-session.sh /usr/local/bin/claude-session
+
 # Make scripts executable
-RUN chmod +x /workspace/setup.sh /usr/local/bin/claude-start
+RUN chmod +x /workspace/setup.sh /usr/local/bin/claude-start \
+    /usr/local/bin/claude-init \
+    /usr/local/bin/claude-open \
+    /usr/local/bin/claude-session
+
+# Create aliases for convenience
+RUN echo 'alias superclaude="claude-session"' >> /root/.bashrc \
+    && echo 'alias sc-init="claude-init"' >> /root/.bashrc \
+    && echo 'alias sc-open="claude-open"' >> /root/.bashrc \
+    && echo 'alias sc-status="claude-session status"' >> /root/.bashrc
 
 # Create entrypoint script with reset support
 RUN echo '#!/bin/bash\n\

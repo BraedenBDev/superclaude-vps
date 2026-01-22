@@ -84,6 +84,49 @@ sc  # Opens Claude CLI
 curl http://localhost:8787/health
 ```
 
+## Project Management Features
+
+### Automatic Git MCP Configuration
+
+Every project automatically gets its own git MCP server configured:
+
+1. **New Project**: `claude-init myproject`
+   - Creates `/workspace/projects/myproject`
+   - Initializes git repository
+   - Adds project-specific `.mcp.json` with git MCP
+   - Creates `CLAUDE.md` for project documentation
+
+2. **Existing Project**: `claude-open myproject`
+   - Opens project directory
+   - Checks/adds git MCP if missing
+   - Shows git status and recent commits
+   - Updates session state
+
+3. **Session Management**: `claude-session`
+   - Track current project
+   - Resume previous work
+   - List all projects with git status
+   - Switch between projects seamlessly
+
+### Example Workflow
+
+```bash
+# Inside Docker container
+docker exec -it claude-dev bash
+
+# Create new project
+claude-init my-web-app
+cd /workspace/projects/my-web-app
+
+# Start Claude with project's git MCP already configured
+claude
+
+# Later, resume work
+claude-session resume
+# or
+claude-open my-web-app
+```
+
 ## Architecture
 
 ```
@@ -124,6 +167,19 @@ scstart            # Start container
 scstop             # Stop container
 sclogs             # View Claude logs
 scstatus           # Check container status
+```
+
+### Project Management (Inside Docker)
+```bash
+claude-init myapp   # Create new project with git MCP
+claude-open myapp   # Open existing project
+claude-session      # Show current session status
+superclaude list    # List all projects
+
+# Shortcuts
+sc-init myapp       # Same as claude-init
+sc-open myapp       # Same as claude-open
+sc-status           # Current session status
 ```
 
 ### Service Management
