@@ -37,7 +37,7 @@
     },
     "git": {
       "command": "uvx",
-      "args": ["mcp-server-git", "--repository", "${PWD}"],
+      "args": ["mcp-server-git", "--repository", "/workspace/projects"],
       "server_instructions": "Local git repository operations. Use for: commits, branches, diffs, logs, stash, merge, rebase, cherry-pick, blame, file history, staged changes, working directory status."
     },
     "hostinger": {
