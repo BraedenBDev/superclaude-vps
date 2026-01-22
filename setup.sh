@@ -5,6 +5,10 @@
 
 set -e
 
+# Prevent interactive prompts during package installation
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
 echo "========================================="
 echo "SuperClaude VPS Setup"
 echo "========================================="
@@ -33,7 +37,7 @@ check_status() {
 
 # 1. System Update
 echo -e "\n${YELLOW}Step 1: Updating system...${NC}"
-sudo apt update && sudo apt upgrade -y
+sudo apt-get update -qq && sudo apt-get upgrade -y -qq
 check_status "System update"
 
 # 2. Install Docker
@@ -51,19 +55,19 @@ fi
 
 # 3. Install Docker Compose
 echo -e "\n${YELLOW}Step 3: Installing Docker Compose...${NC}"
-sudo apt install -y docker-compose-plugin
+sudo apt-get install -y -qq docker-compose-plugin
 check_status "Docker Compose installation"
 
 # 4. Install Development Tools
 echo -e "\n${YELLOW}Step 4: Installing development tools...${NC}"
-sudo apt install -y git tmux htop ncdu curl wget python3-pip
+sudo apt-get install -y -qq git tmux htop ncdu curl wget python3-pip
 check_status "Development tools"
 
 # 5. Install Node.js
 if ! command -v node &> /dev/null; then
     echo -e "\n${YELLOW}Step 5: Installing Node.js...${NC}"
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-    sudo apt install -y nodejs
+    sudo apt-get install -y -qq nodejs
     check_status "Node.js installation"
 else
     echo -e "\n${GREEN}Node.js already installed${NC}"
@@ -83,13 +87,13 @@ fi
 # 7. Install Python dependencies for Faster-Whisper
 echo -e "\n${YELLOW}Step 7: Installing Faster-Whisper (CTranslate2 optimized)...${NC}"
 # faster-whisper is 4x faster than OpenAI's whisper with 50% less RAM usage
-pip3 install --user faster-whisper uvicorn fastapi httpx python-multipart
+pip3 install --user --quiet faster-whisper uvicorn fastapi httpx python-multipart
 check_status "Faster-Whisper and API dependencies"
 
 # 8. Install PM2
 if ! command -v pm2 &> /dev/null; then
     echo -e "\n${YELLOW}Step 8: Installing PM2...${NC}"
-    sudo npm install -g pm2 tsx
+    sudo npm install -g pm2 tsx --silent
     check_status "PM2 installation"
 else
     echo -e "\n${GREEN}PM2 already installed${NC}"
@@ -108,13 +112,9 @@ else
     echo -e "\n${GREEN}Swap already configured${NC}"
 fi
 
-# 10. Install Tailscale (optional)
-echo -e "\n${YELLOW}Do you want to install Tailscale for secure remote access? (y/n)${NC}"
-read -r install_tailscale
-if [[ $install_tailscale == "y" || $install_tailscale == "Y" ]]; then
-    curl -fsSL https://tailscale.com/install.sh | sh
-    echo -e "${YELLOW}Run 'sudo tailscale up' to connect to your Tailscale network${NC}"
-fi
+# 10. Install Tailscale (optional - skipped in automated setup)
+echo -e "\n${YELLOW}Step 10: Skipping Tailscale (install manually if needed)${NC}"
+# To install Tailscale later, run: curl -fsSL https://tailscale.com/install.sh | sh
 
 # 11. Create project directories
 echo -e "\n${YELLOW}Step 11: Creating project directories...${NC}"

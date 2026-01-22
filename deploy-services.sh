@@ -3,6 +3,10 @@
 # Deploy all SuperClaude services
 set -e
 
+# Prevent interactive prompts
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
 echo "========================================="
 echo "Deploying SuperClaude Services"
 echo "========================================="
