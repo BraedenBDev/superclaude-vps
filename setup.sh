@@ -60,7 +60,7 @@ check_status "Docker Compose installation"
 
 # 4. Install Development Tools
 echo -e "\n${YELLOW}Step 4: Installing development tools...${NC}"
-sudo apt-get install -y -qq git tmux htop ncdu curl wget python3-pip
+sudo apt-get install -y -qq git tmux htop ncdu curl wget python3-pip unzip
 check_status "Development tools"
 
 # 5. Install Node.js
