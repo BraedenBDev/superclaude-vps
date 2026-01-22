@@ -58,12 +58,12 @@ ENV PATH="/root/.maestro/bin:$PATH"
 # Create workspace
 WORKDIR /workspace
 
-# Copy configuration files
-COPY .claude/ /workspace/.claude/
-COPY .mcp.json /workspace/.mcp.json
-COPY CLAUDE.md /workspace/CLAUDE.md
+# Copy configuration files from templates
+COPY templates/.claude/ /workspace/.claude/
+COPY templates/.mcp.json /workspace/.mcp.json
+COPY templates/CLAUDE.md /workspace/CLAUDE.md
 COPY setup.sh /workspace/setup.sh
-COPY claude-start /usr/local/bin/claude-start
+COPY scripts/claude-start.sh /usr/local/bin/claude-start
 
 # Copy project management scripts
 COPY scripts/claude-init.sh /usr/local/bin/claude-init
