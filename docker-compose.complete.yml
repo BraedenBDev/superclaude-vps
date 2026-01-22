@@ -1,0 +1,204 @@
+# SuperClaude Complete Stack
+#
+# All services for full mobile control of Claude Code:
+#   - claude-dev:    Main Claude Code container
+#   - telegram-bot:  Telegram control interface
+#   - whisper:       Local speech-to-text (no OpenAI needed)
+#   - api:           Unified API router
+#
+# Usage:
+#   docker compose up -d
+#
+# Access:
+#   - Telegram: Chat with your bot
+#   - API: http://localhost:3850/api/health
+#   - Whisper: http://localhost:8787/health
+#
+# Ports:
+#   - 3000-3001: Web dev servers
+#   - 4000: API server
+#   - 8081: Expo Metro
+#   - 3850: SuperClaude API router
+#   - 8787: Whisper API (internal)
+#   - 3847: Telegram webhook (internal)
+
+services:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Claude Code Container
+  # ═══════════════════════════════════════════════════════════════════════════
+  claude-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-dev
+    stdin_open: true
+    tty: true
+    
+    volumes:
+      - ${PROJECTS_ROOT:-~/projects}:/workspace/projects
+      - ./templates:/workspace/templates:ro
+      - ./hooks:/root/.superclaude/hooks:ro
+      - claude-config:/root/.claude
+      - bun-cache:/root/.bun
+      
+    ports:
+      # Web development
+      - "3000:3000"
+      - "3001:3001"
+      - "4000:4000"
+      - "5173:5173"
+      - "8000:8000"
+      
+      # Expo / React Native
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+      
+      # Databases
+      - "5432:5432"
+      - "6379:6379"
+      
+      # Tools
+      - "54321:54321"
+      - "37777:37777"
+    
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - ENABLE_EXPERIMENTAL_MCP_CLI=true
+      - GITHUB_PAT=${GITHUB_PAT:-}
+      - TERM=xterm-256color
+      - FORCE_COLOR=1
+      - REACT_NATIVE_PACKAGER_HOSTNAME=${TAILSCALE_IP:-}
+      # Notification config (uses internal docker network)
+      - TELEGRAM_USER_ID=${TELEGRAM_USER_ID:-}
+      - SUPERCLAUDE_API_URL=http://api:3850
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
+    restart: unless-stopped
+    working_dir: /workspace/projects
+    
+    networks:
+      - superclaude
+    
+    depends_on:
+      - api
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Local Whisper API (Speech-to-Text)
+  # ═══════════════════════════════════════════════════════════════════════════
+  whisper:
+    build:
+      context: ./whisper-api
+      dockerfile: Dockerfile
+      args:
+        - PRELOAD_MODEL=true
+    container_name: superclaude-whisper
+    restart: unless-stopped
+    
+    environment:
+      # Model options: tiny, base, small, medium, large-v3
+      # - tiny:    ~75MB,  fastest, least accurate
+      # - base:    ~150MB, good balance (default)
+      # - small:   ~500MB, better accuracy
+      # - medium:  ~1.5GB, high accuracy
+      # - large-v3: ~3GB,  best accuracy
+      - WHISPER_MODEL=${WHISPER_MODEL:-base}
+      - WHISPER_DEVICE=cpu
+      - WHISPER_COMPUTE_TYPE=int8
+    
+    volumes:
+      # Persist downloaded models
+      - whisper-models:/app/models
+    
+    # No external port - only accessible via API router
+    expose:
+      - "8787"
+    
+    networks:
+      - superclaude
+    
+    # Whisper needs more memory for larger models
+    deploy:
+      resources:
+        limits:
+          memory: ${WHISPER_MEMORY:-2G}
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Telegram Bot
+  # ═══════════════════════════════════════════════════════════════════════════
+  telegram-bot:
+    build:
+      context: ./telegram-bot
+      dockerfile: Dockerfile
+    container_name: superclaude-telegram-bot
+    restart: unless-stopped
+    
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ALLOWED_USERS=${TELEGRAM_ALLOWED_USERS}
+      - WHISPER_API_URL=http://whisper:8787
+      - PROJECTS_ROOT=/workspace/projects
+      - PORT=3847
+    
+    volumes:
+      - ${PROJECTS_ROOT:-~/projects}:/workspace/projects
+      - telegram-bot-data:/app/data
+    
+    expose:
+      - "3847"
+    
+    networks:
+      - superclaude
+    
+    depends_on:
+      - whisper
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # API Router (Unified Gateway)
+  # ═══════════════════════════════════════════════════════════════════════════
+  api:
+    build:
+      context: ./api-router
+      dockerfile: Dockerfile
+    container_name: superclaude-api
+    restart: unless-stopped
+    
+    environment:
+      - WHISPER_URL=http://whisper:8787
+      - TELEGRAM_BOT_URL=http://telegram-bot:3847
+    
+    ports:
+      # External API access
+      - "3850:3850"
+    
+    networks:
+      - superclaude
+    
+    depends_on:
+      - whisper
+      - telegram-bot
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Volumes
+# ═══════════════════════════════════════════════════════════════════════════════
+
+volumes:
+  claude-config:
+    name: superclaude-config
+  bun-cache:
+    name: superclaude-bun
+  telegram-bot-data:
+    name: superclaude-telegram-data
+  whisper-models:
+    name: superclaude-whisper-models
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Networks
+# ═══════════════════════════════════════════════════════════════════════════════
+
+networks:
+  superclaude:
+    name: superclaude

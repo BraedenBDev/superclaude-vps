@@ -1,0 +1,15 @@
+# Whisper API Dependencies
+# faster-whisper uses CTranslate2 for optimized inference
+
+faster-whisper==1.0.3  # CTranslate2-based Whisper (much faster than OpenAI's)
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+httpx==0.27.2
+python-multipart==0.0.12
+
+# faster-whisper will automatically install:
+# - ctranslate2 (optimized inference engine)
+# - huggingface-hub (for model downloads)
+# - tokenizers (for text processing)
+# - av (for audio processing)
+# - onnxruntime (for some models)

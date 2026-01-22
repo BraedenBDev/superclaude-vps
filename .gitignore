@@ -1,0 +1,75 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+
+# Whisper models cache
+models/
+*.bin
+*.pt
+whisper-cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+pm2/
+
+# Docker
+*.pid
+
+# Backup files
+*.backup
+*.bak
+backup/
+backups/
+
+# Session data
+session-state.json
+.claude/session-state.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS
+Thumbs.db
+
+# PM2
+ecosystem.config.js
+
+# Test files
+*.test.js
+*.spec.js
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build outputs
+dist/
+build/

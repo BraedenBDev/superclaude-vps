@@ -1,0 +1,13 @@
+{
+  "enabledMcpjsonServers": [
+    "apple-docs",
+    "context7",
+    "chrome-devtools",
+    "linear",
+    "sentry",
+    "github",
+    "grep",
+    "git"
+  ],
+  "enableAllProjectMcpServers": true
+}

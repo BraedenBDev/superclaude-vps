@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  claude-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-dev
+
+    # Interactive terminal support
+    stdin_open: true
+    tty: true
+
+    volumes:
+      # Mount projects directory
+      - ${PROJECTS_ROOT:-~/projects}:/workspace/projects
+
+      # Mount templates (read-only)
+      - ./templates:/workspace/templates:ro
+
+      # Persist Claude configuration
+      - claude-config:/root/.claude
+
+      # Persist Bun cache
+      - bun-cache:/root/.bun
+
+      # Optional: Mount SSH keys for git
+      # - ~/.ssh:/root/.ssh:ro
+
+      # Optional: Mount git config
+      # - ~/.gitconfig:/root/.gitconfig:ro
+
+    ports:
+      # Expo Metro bundler
+      - "8081:8081"
+      # Expo DevTools
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+      # Development servers
+      - "3000:3000"
+      - "3001:3001"
+      - "4000:4000"
+      - "5000:5000"
+      # Supabase Studio (if using local Supabase)
+      - "54321:54321"
+      # Claude-mem web viewer
+      - "37777:37777"
+
+    environment:
+      # Anthropic API key (optional - can use browser auth)
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+
+      # MCP-CLI for token savings
+      - ENABLE_EXPERIMENTAL_MCP_CLI=${ENABLE_EXPERIMENTAL_MCP_CLI:-true}
+
+      # GitHub PAT for MCP server (optional)
+      - GITHUB_PAT=${GITHUB_PAT:-}
+
+      # Supabase local development (optional)
+      - SUPABASE_URL=${SUPABASE_URL:-http://host.docker.internal:54321}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
+
+      # Enable color output
+      - TERM=xterm-256color
+      - FORCE_COLOR=1
+
+      # Projects root
+      - PROJECTS_ROOT_HOST=${PROJECTS_ROOT:-~/projects}
+
+      # Tailscale IP (if configured)
+      - TAILSCALE_IP=${TAILSCALE_IP:-}
+
+    # Access host network for local services
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # Keep running
+    restart: unless-stopped
+
+    # Start in projects directory
+    working_dir: /workspace/projects
+
+    # Resource limits (adjust based on your VPS)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 3G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+volumes:
+  claude-config:
+    name: superclaude-config
+  bun-cache:
+    name: superclaude-bun
+
+networks:
+  default:
+    name: superclaude-network

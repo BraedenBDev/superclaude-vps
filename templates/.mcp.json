@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "apple-docs": {
+      "command": "npx",
+      "args": ["apple-doc-mcp-server@latest"],
+      "server_instructions": "Apple Developer Documentation for iOS/Swift. Use for: UIKit, SwiftUI, Foundation, CoreData, UserNotifications, HealthKit, MapKit, AVFoundation, CoreLocation, Push Notifications, App Store Connect, TestFlight, Xcode configuration, Swift language features, Objective-C interop, iOS app lifecycle, background tasks, widgets, App Clips."
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "server_instructions": "Up-to-date library documentation and code examples. Use for: React, React Native, Expo, Expo Router, Supabase, TypeScript, JavaScript, Node.js, Tailwind CSS, Zustand, TanStack Query, Jest, Testing Library, Vitest, ESLint, Prettier, npm packages. Trigger with 'use context7' in prompts."
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "server_instructions": "Chrome browser debugging and automation for web apps. Use for: network request analysis, console error inspection, performance traces, DOM inspection, screenshots, accessibility audits, JavaScript evaluation, CORS debugging, cookie inspection, local storage, service workers, web vitals."
+    },
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp",
+      "server_instructions": "Linear issue tracking and project management. Use for: fetching issues, creating tasks, updating status, moving tickets between states, linking PRs, searching issues, managing projects, sprints, cycles, team workload, issue dependencies, labels, priorities."
+    },
+    "sentry": {
+      "type": "http",
+      "url": "https://mcp.sentry.dev/mcp",
+      "server_instructions": "Sentry error monitoring and debugging. Use for: production errors, crash reports, stack traces, error frequency, affected users, release health, performance monitoring, transaction traces, Seer AI root cause analysis, deployment correlation."
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "server_instructions": "GitHub integration for code collaboration. Use for: pull requests, code review, issues, CI/CD status, workflow runs, repository search, file contents, commits, branches, releases, GitHub Actions, PR comments, merge operations."
+    },
+    "grep": {
+      "command": "uvx",
+      "args": ["grep-mcp"],
+      "server_instructions": "GitHub code search via grep.app. Use for: finding code examples, implementation patterns, library usage, API examples, configuration snippets, when official docs lack examples. Search millions of GitHub repositories."
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "${PWD}"],
+      "server_instructions": "Local git repository operations. Use for: commits, branches, diffs, logs, stash, merge, rebase, cherry-pick, blame, file history, staged changes, working directory status."
+    }
+  }
+}
