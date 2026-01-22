@@ -39,6 +39,14 @@
       "command": "uvx",
       "args": ["mcp-server-git", "--repository", "${PWD}"],
       "server_instructions": "Local git repository operations. Use for: commits, branches, diffs, logs, stash, merge, rebase, cherry-pick, blame, file history, staged changes, working directory status."
+    },
+    "hostinger": {
+      "command": "npx",
+      "args": ["hostinger-api-mcp@latest"],
+      "env": {
+        "API_TOKEN": "YGMbb3F9fv0RG1Epfbx9h52wvvMVlXV0cGgUmhsb932d58a0"
+      },
+      "server_instructions": "Hostinger VPS management. Use for: checking VPS status, managing domains, monitoring resources, restarting services, viewing logs, managing DNS records, checking bandwidth usage, managing firewall rules, VPS configuration."
     }
   }
 }
