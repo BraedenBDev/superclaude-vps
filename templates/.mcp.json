@@ -35,11 +35,6 @@
       "args": ["grep-mcp"],
       "server_instructions": "GitHub code search via grep.app. Use for: finding code examples, implementation patterns, library usage, API examples, configuration snippets, when official docs lack examples. Search millions of GitHub repositories."
     },
-    "git": {
-      "command": "uvx",
-      "args": ["mcp-server-git", "--repository", "/workspace/projects"],
-      "server_instructions": "Local git repository operations. Use for: commits, branches, diffs, logs, stash, merge, rebase, cherry-pick, blame, file history, staged changes, working directory status."
-    },
     "hostinger": {
       "command": "npx",
       "args": ["hostinger-api-mcp@latest"],
